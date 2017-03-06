@@ -1,3 +1,7 @@
+v1.0.2 / 2017-03-06:
+
+- Added the "from" key
+
 v1.0.1 / 2012-01-31:
 
 - Remove branch tags from log output (not that useful in github's wiki context)
