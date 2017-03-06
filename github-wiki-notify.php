@@ -31,7 +31,7 @@ foreach ($argv as $arg)
 	} else if (preg_match('/--subject=(.*)/', $arg, $match)) {
 		$subject = $match[1];
 	} else if (preg_match('/--from=(.*)/', $arg, $match)) {
-		$subject = $match[1];
+		$from = $match[1];
 	}
 }
 
