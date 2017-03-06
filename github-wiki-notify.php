@@ -21,6 +21,7 @@
 $path = null;
 $email = null;
 $subject = null;
+$from = null;
 foreach ($argv as $arg)
 {
 	if (preg_match('/--path=(.*)/', $arg, $match)) {
@@ -29,13 +30,15 @@ foreach ($argv as $arg)
 		$email = $match[1];
 	} else if (preg_match('/--subject=(.*)/', $arg, $match)) {
 		$subject = $match[1];
+	} else if (preg_match('/--from=(.*)/', $arg, $match)) {
+		$subject = $match[1];
 	}
 }
 
-if (is_null($path) || is_null($email))
+if (is_null($path) || is_null($email) || is_null($from))
 {
 	echo("Usage:\n");
-	echo("  " . basename(__FILE__) . " --path=/path/to/repo --email=list@example.com\n");
+	echo("  " . basename(__FILE__) . " --path=/path/to/repo --email=list@example.com --from=my@email.com\n");
 	exit(1);
 }
 
@@ -56,6 +59,6 @@ if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
 		$subject = '[SCM]: ' . $repo . ' was updated';
 	}
 	$body = "To see the changes, visit:\n" . $wikiDiffUrl . "\n\nChangelog:\n" . $changeLog . "\n";
-	mail($email, $subject, $body, "From: $email");
+	mail($email, $subject, $body, "From: $from");
 }
 // else no updates
