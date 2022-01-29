@@ -18,7 +18,7 @@ Get a checkout of your Github repo:
 	
 Then create a cron (e.g. `crontab -e`):
 
-	*/15 * * * * github-wiki-notify.php --path="/some/path/repo.wiki" --email="list@example.com" --subject="Wiki updated!"
+	*/15 * * * * github-wiki-notify.php --path="/some/path/repo.wiki" --email="list@example.com" --subject="Wiki updated!" --from="from@example.org"
 
 Problems? Want to contribute?
 -----------------------------

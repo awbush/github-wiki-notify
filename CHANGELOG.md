@@ -1,3 +1,10 @@
+v1.0.3 / 2022-01-29:
+
+- GitHub output has changed, therefor regex syntax has to be corrected
+  + Request repo link from git remote, it is no longer in pullResult
+  + pullResult answer is now 'Updating FROMSHA..TO__SHA'
+  + also pullResult answer is localized!
+
 v1.0.2 / 2017-03-06:
 
 - Added the "from" key

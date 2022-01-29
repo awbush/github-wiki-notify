@@ -47,12 +47,19 @@ if (!chdir($path)) {
 	exit(2);
 }
 
-$pullResult = `git pull 2>&1`;
-if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
+// request repo-URL from git remote
+$remote = `git remote -v`;
+$repo = 'unknown';
+if (preg_match('/origin\s*(\S*)\s*\(fetch\)\n/', $remote, $match))
 {
-	$repo = $match[1];
-	$revs = $match[2];
-	$wikiDiffUrl = 'https://github.com/' . str_replace('.wiki', '/wiki', $repo) . '/_compare/' . $revs;
+    $repo = $match[1];
+}
+
+$pullResult = `git pull 2>&1`;
+if (preg_match('/^\S* ([a-z0-9]{7}\.\.[a-z0-9]{7})\n/', $pullResult, $match))
+{
+	$revs = $match[1];
+	$wikiDiffUrl = str_replace('.wiki.git', '/wiki', $repo) . '/_compare/' . $revs;
 	$changeLog = `git log --pretty=format:'%h - %s (%cr) <%an>' $revs`;
 	
 	if (is_null($subject)) {
@@ -62,3 +69,4 @@ if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
 	mail($email, $subject, $body, "From: $from");
 }
 // else no updates
+
