@@ -6,6 +6,9 @@
  * Usage is simple, just cron it:
  * 
  *     github-wiki-notify.php --path=/path/to/repo --email=list@example.com --subject="Wiki updated!"
+ * 
+ * Optional parameter:
+ *     --verbose=LEVEL		LEVEL = 0..5, see class Level, 0 = quiet .. 5 = debugging, default = 0
  *
  * @author Anthony Bush
  * @version 1.0.1
@@ -15,12 +18,25 @@
  **/
 
 /**
+ * verbose level
+ **/
+class Level {
+	const NOTHING = 0;
+	const ALERT   = 1;
+	const ERROR   = 2;
+	const WARNING = 3;
+	const INFO    = 4;
+	const DEBUG   = 5;
+}
+
+/**
  * Define DocBlock
  **/
 
 $path = null;
 $email = null;
 $subject = null;
+$verbose = Level::NOTHING;
 foreach ($argv as $arg)
 {
 	if (preg_match('/--path=(.*)/', $arg, $match)) {
@@ -29,13 +45,15 @@ foreach ($argv as $arg)
 		$email = $match[1];
 	} else if (preg_match('/--subject=(.*)/', $arg, $match)) {
 		$subject = $match[1];
+	} else if (preg_match('/--verbose=(.*)/', $arg, $match)) {
+		$verbose = $match[1];
 	}
 }
 
 if (is_null($path) || is_null($email))
 {
 	echo("Usage:\n");
-	echo("  " . basename(__FILE__) . " --path=/path/to/repo --email=list@example.com\n");
+	echo("  " . basename(__FILE__) . " --path=/path/to/repo --email=list@example.com [--verbose=(0..5)]\n");
 	exit(1);
 }
 
@@ -58,4 +76,17 @@ if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
 	$body = "To see the changes, visit:\n" . $wikiDiffUrl . "\n\nChangelog:\n" . $changeLog . "\n";
 	mail($email, $subject, $body, "From: $email");
 }
-// else no updates
+else {
+	verbose( "No match in pullResult!", Level::INFO);
+	verbose( "\npullResult:");
+	verbose( $pullResult);
+}
+
+function verbose($message, $level = Level::DEBUG)
+{
+	global $verbose;
+
+	if ($verbose >= $level) {
+		echo $message . "\n";
+	}
+}
