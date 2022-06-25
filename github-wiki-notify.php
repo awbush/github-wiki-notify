@@ -71,7 +71,7 @@ if (!chdir($path)) {
 	exit(2);
 }
 
-$pullResult = `git pull 2>&1`;
+$pullResult = `git pull -v 2>&1`;
 if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
 {
 	$repo = $match[1];
