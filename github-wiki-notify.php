@@ -12,8 +12,9 @@
  *     --verbose=LEVEL				LEVEL = 0..5, see class Level, 0 = quiet .. 5 = debugging, default = 0
  *
  * @author Anthony Bush
- * @version 1.0.1
+ * @version 1.0.2
  * @copyright Anthony Bush, 20 December, 2011
+ * @copyright Armin Stebich, 25 June, 2022
  * @license <http://www.opensource.org/licenses/bsd-license.php>
  * @package default
  **/
