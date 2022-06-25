@@ -71,11 +71,26 @@ if (!chdir($path)) {
 	exit(2);
 }
 
-$pullResult = `git pull -v 2>&1`;
-if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
-{
+// request repo-URL with `git remote`
+// which is for HTTPS:	https://github.com/OWNER/REPO.wiki.git
+// and for SSH:			git@github.com:OWNER/REPO.wiki.git
+$remote = `git remote get-url origin`;
+$repo = 'unknown';
+if (preg_match('/github.com[:\/](\S*)\.git$/', $remote, $match)) {
 	$repo = $match[1];
-	$revs = $match[2];
+	verbose( "remote url found: $repo", Level::INFO);
+}
+else {
+	verbose( "No remote url found!", Level::ERROR);
+	exit(3);
+}
+
+// pull possible changes and analyze result
+// be aware that git output is localized!
+$pullResult = `git pull -v 2>&1`;
+if (preg_match('/^\S* ([a-z0-9]{7}\.\.[a-z0-9]{7})\n/m', $pullResult, $match)) {
+	$revs = $match[1];
+	verbose( "updated: $revs", Level::INFO);
 	$wikiDiffUrl = 'https://github.com/' . str_replace('.wiki', '/wiki', $repo) . '/_compare/' . $revs;
 	$changeLog = `git log --pretty=format:'%h - %s (%cr) <%an>' $revs`;
 	
@@ -86,7 +101,9 @@ if (preg_match('/From github\.com:(.*)\n\s*([^\s]+)/', $pullResult, $match))
 	mail($email, $subject, $body, "From: $from");
 }
 else {
+	// this may be because the repo is up to date, what is okay
 	verbose( "No match in pullResult!", Level::INFO);
+	// but can also be an issue with the regex, because of localization or git changes
 	verbose( "\npullResult:");
 	verbose( $pullResult);
 }
